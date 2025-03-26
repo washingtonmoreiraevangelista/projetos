@@ -15,7 +15,6 @@ const userSchema = new Schema<IUserModel>(
       unique: true,  
       trim: true,
       lowercase: true,
-      match: [/^\S+@\S+\.\S+$/, "Email inválido"],
     },
     password: {
       type: String,
@@ -28,23 +27,5 @@ const userSchema = new Schema<IUserModel>(
     timestamps: true,
   }
 )
-
-userSchema.pre<IUserModel>("save", async function (next) {
-  if (!this.isModified("password")) return next()
-
-  try {
-    const salt = await bcrypt.genSalt(10)
-    this.password = await bcrypt.hash(this.password, salt)
-    next()
-  } catch (error) {
-    next(error as Error)
-  }
-})
-
-userSchema.methods.comparePassword = async function (
-  candidatePassword: string
-): Promise<boolean> {
-  return bcrypt.compare(candidatePassword, this.password)
-}
 
 export const User = mongoose.model<IUserModel>("users", userSchema)
