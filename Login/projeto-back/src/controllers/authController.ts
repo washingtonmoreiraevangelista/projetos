@@ -1,54 +1,73 @@
-import { Request, Response } from 'express'
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import { User } from '../model/schema'
+import { Request, Response } from "express"
+import bcrypt from "bcryptjs"
+import { registerUser, loginUser } from "../services/authService"
+import { service } from '../services/services'
 
-export const Login = async (req: Request, res: Response): Promise<void> => {
+
+export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body
+    const result = await registerUser(email, password)
+    res.status(201).json(result)
+  } catch (error: any) {
+    res.status(400).json({ message: error.message })
+  }
+}
 
-    if (!email || !password) {
-      res.status(400).json({ message: 'E-mail e senha são obrigatórios' })
-      return
-    }
+export const login = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, password } = req.body
+    const result = await loginUser(email, password)
+    res.status(200).json(result)
+  } catch (error: any) {
+    res.status(401).json({ message: error.message })
+  }
+}
+export const updateUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params
+    const { email, password } = req.body
 
-    console.log('🔍 Buscando usuário no banco:', email)
 
-    // Tente buscar o usuário no MongoDB
-    const user = await User.findOne({ email })
+    // Buscar o usuário no banco de dados usando ObjectId
+    const users = await service.getCollection("users")
+    const user = users.find((user: any) => user._id.toString() === id)
 
     if (!user) {
-      console.log('⚠️ Usuário não encontrado:', email)
-      res.status(401).json({ message: 'Credenciais inválidas' })
+      res.status(404).json({ message: "Usuário não encontrado" })
       return
     }
 
-    console.log('Usuário encontrado:', user)
+    const updatedData: any = {}
+    if (email) updatedData.email = email
+    if (password) {
+      const salt = await bcrypt.genSalt(10)
+      updatedData.password = await bcrypt.hash(password, salt)
+    }
 
-    // Verifica se a senha está correta
-    const isPasswordValid = await bcrypt.compare(password, user.password)
-    if (!isPasswordValid) {
-      console.log(' Senha inválida para:', email)
-      res.status(401).json({ message: 'Credenciais inválidas' })
+    await service.update("users", id, updatedData)
+    res.status(200).json({ message: "Usuário atualizado com sucesso" })
+  } catch (error: any) {
+    res.status(500).json({ message: `Erro no servidor: ${error.message}` })
+  }
+}
+
+export const deleteUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params
+
+    // Buscar o usuário no banco de dados usando ObjectId
+    const users = await service.getCollection("users")
+    const user = users.find((user: any) => user._id.toString() === id)
+
+    if (!user) {
+      res.status(404).json({ message: "Usuário não encontrado" })
       return
     }
 
-    const jwtSecret = process.env.JWT_SECRET
-    if (!jwtSecret) {
-      console.error(' JWT_SECRET não está definido nas variáveis de ambiente')
-      throw new Error('JWT_SECRET não está definido')
-    }
-
-    // Gerar token JWT
-    const token = jwt.sign({ id: user._id, email: user.email }, jwtSecret, {
-      expiresIn: '1h',
-    })
-
-    console.log('🔑 Token gerado:', token)
-
-    res.status(200).json({ message: 'Login bem-sucedido', token })
-  } catch (error:any) {
-    console.error(' Erro no login:', error)
-    res.status(500).json({ message: `Erro interno no servidor: ${error.message}` })
+    await service.delete("users", id)
+    res.status(200).json({ message: "Usuário excluído com sucesso" })
+  } catch (error: any) {
+    res.status(500).json({ message: `Erro no servidor: ${error.message}` })
   }
 }

@@ -2,7 +2,8 @@ import express, { Router } from "express"
 import cors from "cors"
 import dotenv from "dotenv"
 import { connectDB } from "./config/mongoClient"
-import { router } from './router/userRouter'
+import { router } from './router/router'
+import { authRouter } from './router/auth'
 
 dotenv.config()
 
@@ -17,6 +18,8 @@ connectDB()
 
     // Usar as rotas dinâmicas
     app.use("/", router)
+    app.use("/auth", authRouter)
+
 
     app.get("/api", (req, res) => {
       res.send(`API rodando na porta ${PORT}`)

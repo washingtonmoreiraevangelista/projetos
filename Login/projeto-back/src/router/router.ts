@@ -1,6 +1,5 @@
 import { Router } from 'express'
-import { delet, getCollection, update, create } from '../controllers/userController'
-import { Login } from '../controllers/authController'
+import { delet, getCollection, update, create } from '../controllers/controller'
 
 export const router = Router()
 
@@ -17,4 +16,3 @@ router.put('/controller/:collectionName/:id', update)
 router.delete('/controller/:collectionName/:id', delet)
 
 // Rota de login
-router.post('/auth/login', Login)
