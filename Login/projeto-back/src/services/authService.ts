@@ -1,4 +1,4 @@
-import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken"
 import { service } from './services'
 
 
@@ -38,5 +38,17 @@ export const loginUser = async (email: string, password: string) => {
     throw new Error("Credenciais inválidas")
   }
 
-  return { message: "Login bem-sucedido", }
+    // Criar o token JWT
+    const jwtSecret = process.env.JWT_SECRET
+    if (!jwtSecret) {
+      throw new Error("JWT_SECRET não definido")
+    }
+
+    const token = jwt.sign(
+      { id: user._id, email: user.email},
+      jwtSecret,
+      { expiresIn: "90s" } 
+    )
+
+  return { message: "Login bem-sucedido", token }
 }
