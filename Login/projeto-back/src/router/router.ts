@@ -14,5 +14,3 @@ router.put('/controller/:collectionName/:id', update)
 
 //  Deletar dados de qualquer coleção
 router.delete('/controller/:collectionName/:id', delet)
-
-// Rota de login

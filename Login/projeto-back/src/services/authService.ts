@@ -37,15 +37,10 @@ export const loginUser = async (email: string, password: string) => {
   }
 
   const isMatch = await bcrypt.compare(password, user.password)
-console.log("Senha fornecida:", password)  // Log a senha fornecida
-console.log("Senha armazenada no banco:", user.password)  // Log a senha armazenada no banco
 
-if (!isMatch) {
-  throw new Error("Credenciais inválidas")
-}
   if (!isMatch) {
     throw new Error("Credenciais inválidas")
   }
-
+ 
   return { message: "Login bem-sucedido", }
 }
