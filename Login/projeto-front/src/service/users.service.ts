@@ -3,21 +3,41 @@ import { environment } from '../tools/axiosInstance'
 export const authService = {
   // Registrar um novo usuário
   async register(data: any) {
-    return await environment('/register', 'POST', data)
+    try {
+      const response = await environment('/auth/register', 'POST', data)
+      return response
+    } catch (error) {
+      throw new Error('Erro ao registrar o usuário')
+    }
   },
 
   // Login de usuário
   async login(data: any) {
-    return await environment('/auth/login', 'POST', data)
+    try {
+      const response = await environment('/auth/login', 'POST', data)
+      return response
+    } catch (error) {
+      throw new Error('Erro ao fazer login')
+    }
   },
 
   // Atualizar usuário
   async updateUser(id: string, data: any) {
-    return await environment(`/users/${id}`, 'PUT', data)
+    try {
+      const response = await environment(`/users/${id}`, 'PUT', data)
+      return response
+    } catch (error) {
+      throw new Error('Erro ao atualizar o usuário')
+    }
   },
 
   // Deletar usuário
   async deleteUser(id: string) {
-    return await environment(`/users/${id}`, 'DELETE')
+    try {
+      const response = await environment(`/users/${id}`, 'DELETE')
+      return response
+    } catch (error) {
+      throw new Error('Erro ao deletar o usuário')
+    }
   },
 }
