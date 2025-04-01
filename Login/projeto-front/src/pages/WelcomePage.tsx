@@ -7,11 +7,10 @@ export const WelcomePage = () => {
 
   const userName = localStorage.getItem('userName') || 'Usuário'
 
-  // Função para redirecionar automaticamente para o dashboard após um tempo
   useEffect(() => {
     setTimeout(() => {
       navigate('/dashboard')
-    }, 3000) // Redireciona após 3 segundos
+    }, 3000) 
   }, [navigate])
 
   return (
@@ -38,7 +37,7 @@ export const WelcomePage = () => {
         variant="contained"
         color="primary"
         sx={{ width: '200px' }}
-        onClick={() => navigate('/dashboard')} // Redireciona para o dashboard
+        onClick={() => navigate('/dashboard')} 
       >
         Ir para o Dashboard
       </Button>
