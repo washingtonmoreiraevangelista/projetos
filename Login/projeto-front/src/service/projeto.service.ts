@@ -1,4 +1,4 @@
-import axiosInstance from '../axiosInstance'
+import axiosInstance from '../tools/axiosInstance'
 
 export const ApiService = {
 
@@ -7,12 +7,12 @@ export const ApiService = {
       const response = await axiosInstance.get(`/collection/${collection}`)
       return response.data
     }
-    catch (error) {
+    catch (error: any) {
       throw new Error('Erro ao buscar os dados')
     }
   },
 
-  async create(collection: string, data: any) {
+  async post(collection: string, data: any) {
     try {
       const response = await axiosInstance.post(`/collection/${collection}`, data)
       return response.data

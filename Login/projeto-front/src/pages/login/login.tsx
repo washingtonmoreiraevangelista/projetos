@@ -1,41 +1,33 @@
+import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined'
 import { Box, Button, TextField, Typography } from '@mui/material'
-import { Link, Link as RouterLink, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import { ApiService } from '../service/projeto.service'
+import { Link as RouterLink, useNavigate } from 'react-router-dom'
+import { authService } from '../../service/users.service'
 
 export const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const navigate = useNavigate()
   const [error, setError] = useState('')
+  const navigate = useNavigate()
 
-
-  const fetchLogin = async () => {
+  const handleLogin = async () => {
     try {
-      const response = await ApiService.getAll('users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        console.log('Login bem-sucedido:', data)
-        localStorage.setItem('token', data.token)
-        navigate('/dashboard')
+      const response = await authService.login({ email, password })
+      if (response?.token) {
+        localStorage.setItem('token', response.token)
+        navigate('/welcome')
       } else {
-        setError(data.message || 'E-mail ou senha incorretos')
+        setError('Email ou senha incorretos')
       }
-    } catch (error) {
-      console.error('Erro na requisição:', error)
-      setError('Erro ao conectar ao servidor')
+    } catch (error: unknown) {
+      setError('Email ou senha incorretos')
+
     }
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    fetchLogin()
+    handleLogin()
   }
 
   return (
@@ -65,13 +57,20 @@ export const Login = () => {
           padding: 3,
           boxShadow: 3,
           backdropFilter: 'blur(20px)',
-          overflow: 'hidden',
           borderRadius: '16px',
         }}
       >
+        <PersonOutlinedIcon sx={{ fontSize: 40, alignSelf: 'center', color: '#1976d2' }} />
+
         <Typography variant="h4" sx={{ marginBottom: 3, textAlign: 'center', color: '#222' }}>
           Sign in
         </Typography>
+
+        {error && (
+          <Typography variant="body2" sx={{ color: 'red', textAlign: 'center', marginBottom: 2 }}>
+            {error}
+          </Typography>
+        )}
 
         <TextField
           label="Email"
@@ -80,16 +79,7 @@ export const Login = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          InputLabelProps={{
-            sx: {
-              color: '#222 !important',
-              '&.Mui-focused': { color: '#1976d2 !important' },
-            },
-          }}
-          sx={{
-            marginBottom: 2,
-            input: { color: '#222' }
-          }}
+          sx={{ marginBottom: 2 }}
         />
 
         <TextField
@@ -99,16 +89,7 @@ export const Login = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          InputLabelProps={{
-            sx: {
-              color: '#222 !important',
-              '&.Mui-focused': { color: '#1976d2 !important' },
-            },
-          }}
-          sx={{
-            marginBottom: 2,
-            input: { color: '#222' },
-          }}
+          sx={{ marginBottom: 2 }}
         />
 
         <RouterLink
@@ -125,26 +106,19 @@ export const Login = () => {
         </RouterLink>
 
         <Button
+          type="submit"
           variant="contained"
-          sx={{
-            marginTop: 2,
-            backgroundColor: '#1976d2',
-            color: '#fff',
-            '&:hover': {
-              backgroundColor: '#1565c0',
-            },
-          }}
+          sx={{ marginTop: 2, backgroundColor: '#1976d2', color: '#fff' }}
         >
           Enter
         </Button>
 
         <Typography variant="body2" sx={{ textAlign: 'center', marginTop: 2 }}>
           Não tem uma conta?{' '}
-          <Link component={RouterLink} to="/register" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
+          <RouterLink to="/register" style={{ color: '#1976d2', fontWeight: 'bold' }}>
             Cadastre-se
-          </Link>
+          </RouterLink>
         </Typography>
-
       </Box>
     </Box>
   )
