@@ -1,16 +1,14 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-export const WelcomePage = () => {
+export const HomePage = () => {
   const navigate = useNavigate()
 
   const userName = localStorage.getItem('userName') || 'Usuário'
 
   useEffect(() => {
-    setTimeout(() => {
-      navigate('/dashboard')
-    }, 3000) 
+      navigate('/Homepage')
   }, [navigate])
 
   return (
@@ -33,14 +31,7 @@ export const WelcomePage = () => {
         Estamos felizes por tê-lo(a) conosco.
       </Typography>
 
-      <Button
-        variant="contained"
-        color="primary"
-        sx={{ width: '200px' }}
-        onClick={() => navigate('/dashboard')} 
-      >
-        Ir para o Dashboard
-      </Button>
+    
     </Box>
   )
 }

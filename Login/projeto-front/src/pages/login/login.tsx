@@ -15,7 +15,7 @@ export const Login = () => {
       const response = await authService.login({ email, password })
       if (response?.token) {
         localStorage.setItem('token', response.token)
-        navigate('/welcome')
+        navigate('/homePage')
       } else {
         setError('Email ou senha incorretos')
       }
@@ -93,7 +93,7 @@ export const Login = () => {
         />
 
         <RouterLink
-          to="/forgot-password"
+          to="/forgotPassword"
           style={{
             alignSelf: 'flex-end',
             marginTop: 1,

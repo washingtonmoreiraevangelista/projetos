@@ -4,6 +4,7 @@ import dotenv from "dotenv"
 import { connectDB } from "./config/mongoClient"
 import { router } from './router/router'
 import { authRouter } from './router/auth'
+import { sendResetPasswordEmail } from './services/ResetPasswordEmail'
 
 dotenv.config()
 
@@ -19,6 +20,7 @@ connectDB()
     // Usar as rotas dinâmicas
     app.use("/", router)
     app.use("/auth", authRouter)
+    app.use("/forgot-password", sendResetPasswordEmail)
 
 
     app.get("/api", (req, res) => {

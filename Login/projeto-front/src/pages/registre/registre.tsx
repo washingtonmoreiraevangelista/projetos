@@ -1,38 +1,52 @@
 import React, { useState } from "react"
 import { authService } from "../../service/users.service"
 import { Box, TextField, Button, Typography, Alert } from "@mui/material"
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from "react-router-dom"
+import { IUser } from '../../types/IUseser'
 
 export const Register = () => {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [user, setUser] = useState<IUser>({
+    name: "",
+    email: "",
+    password: "",
+    birthDate: "",
+  })
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
   const navigate = useNavigate()
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUser({ ...user, [e.target.name]: e.target.value })
+  }
+
   const handleRegister = async () => {
-    if (!email || !password) {
-      setError("⚠️ Preencha todos os campos!")
+    if (!user.name || !user.email || !user.password || !user.birthDate) {
+      setError(" Preencha todos os campos!")
+      return
+    }
+
+    if (user.name.trim().split(" ").length < 2) {
+      setError(" Informe seu nome completo!")
+      return
+    }
+
+    if (user.password.length > 6) {
+      setError(" A senha deve ter no máximo 6 caracteres!")
       return
     }
 
     try {
-      const data = { email, password }
-      console.log("Enviando dados:", data) 
-
-      const response = await authService.register(data)
-      setSuccess(" Usuário registrado com sucesso!")
-      setEmail("")
-      setPassword("")
+      
+      const response = await authService.register(user)
+      setSuccess("Usuário registrado com sucesso!")
+      setUser({ name: "", email: "", password: "", birthDate: "" })
       setError("")
 
       setTimeout(() => {
         setSuccess("")
-        navigate("/welcome")
+        navigate("/homePage")
       }, 2000)
-
     } catch (error: any) {
-      console.error("Erro na requisição:", error.response?.data || error.message)
       if (error.response?.status === 409) {
         setError("E-mail já cadastrado! Tente outro.")
       } else {
@@ -75,10 +89,23 @@ export const Register = () => {
         </Typography>
 
         <TextField
+          label="Nome Completo"
+          type="text"
+          name="name"
+          value={user.name}
+          onChange={handleChange}
+          variant="outlined"
+          fullWidth
+          required
+        />
+
+
+        <TextField
           label="Email"
           type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          name="email"
+          value={user.email}
+          onChange={handleChange}
           variant="outlined"
           fullWidth
           required
@@ -87,8 +114,21 @@ export const Register = () => {
         <TextField
           label="Senha"
           type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          name="password"
+          value={user.password}
+          onChange={handleChange}
+          variant="outlined"
+          fullWidth
+          required
+        />
+
+        <TextField
+          label="Data de Nascimento"
+          type="date"
+          name="birthDate"
+          value={user.birthDate}
+          onChange={handleChange}
+          InputLabelProps={{ shrink: true }}
           variant="outlined"
           fullWidth
           required
