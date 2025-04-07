@@ -1,13 +1,16 @@
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined'
-import { Box, Button, TextField, Typography } from '@mui/material'
+import { Box, Button, IconButton, InputAdornment, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { authService } from '../../service/users.service'
+import { Visibility, VisibilityOff } from '@mui/icons-material'
 
 export const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+
   const navigate = useNavigate()
 
   const handleLogin = async () => {
@@ -23,6 +26,10 @@ export const Login = () => {
       setError('Email ou senha incorretos')
 
     }
+  }
+
+  const handleTogglePassword = () => {
+    setShowPassword((prev) => !prev)
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -85,11 +92,20 @@ export const Login = () => {
         <TextField
           label="Password"
           variant="outlined"
-          type="password"
+          type={showPassword ? "text" : "password"}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
           sx={{ marginBottom: 2 }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={handleTogglePassword} edge="end">
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
 
         <RouterLink

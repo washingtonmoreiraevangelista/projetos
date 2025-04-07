@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Box, TextField, Button, Alert, Typography } from "@mui/material"
+import { Box, TextField, Button, Alert, Typography, Link} from "@mui/material"
 import { forgotService } from '../../tools/forgotPassWord'
 
 export const ForgotPassword = () => {
@@ -14,7 +14,7 @@ export const ForgotPassword = () => {
       await forgotService.forgotPassword(email)
       setMessage("E-mail de redefinição enviado! Verifique sua caixa de entrada.")
       setError("")
-    } catch (err: any) {
+    } catch (erro: any) {
       setError("Erro ao enviar solicitação. Tente novamente.")
       setMessage("")
     }
@@ -41,6 +41,10 @@ export const ForgotPassword = () => {
         <Button type="submit" variant="contained" color="primary" fullWidth>
           Enviar
         </Button>
+
+        <Typography variant="body2" mt={2} textAlign="center">
+          <Link href="/">Voltar para o login</Link>
+        </Typography>
       </Box>
     </Box>
   )

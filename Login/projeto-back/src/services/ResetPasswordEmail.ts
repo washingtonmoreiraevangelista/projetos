@@ -1,7 +1,10 @@
 import { Request, Response } from "express"
 import jwt from "jsonwebtoken"
-import nodemailer from "nodemailer"
 import { User } from '../model/schema'
+import { Resend } from 'resend'
+
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export const sendResetPasswordEmail = async (req: Request, res: Response) => {
   try {
@@ -9,27 +12,26 @@ export const sendResetPasswordEmail = async (req: Request, res: Response) => {
 
     const user = await User.findOne({ email })
     if (!user) {
-      return res.status(404).json({ message: "Usuário não encontrado" })
+      res.status(404).json({ message: "Usuário não encontrado" })
+      return
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, { expiresIn: "1h" })
 
     const resetLink = `http://localhost:3000/reset-password/${token}`
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-    })
-
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    await resend.emails.send({
+      from: 'onboarding@resend.dev',
       to: email,
-      subject: "Redefinição de Senha",
-      text: `Clique no link para redefinir sua senha: ${resetLink}`,
+      subject: 'Redefinição de Senha',
+      html: `<p>Olá,</p>
+             <p>Para redefinir sua senha, clique no link abaixo:</p>
+             <p><a href="${resetLink}">Redefinir Senha</a></p>
+             <p>Este link expira em 1 hora.</p>`
     })
 
-    return res.status(200).json({ message: "E-mail enviado com sucesso" })
+    res.status(200).json({ message: "E-mail enviado com sucesso" })
   } catch (error) {
-    return res.status(500).json({ message: "Erro ao enviar e-mail" })
+    res.status(500).json({ message: "Erro ao enviar e-mail" })
   }
 }
