@@ -1,19 +1,27 @@
 import { useState } from "react"
-import { Box, TextField, Button, Alert, Typography, Link} from "@mui/material"
+import { Box, TextField, Button, Alert, Typography, Link } from "@mui/material"
 import { forgotService } from '../../tools/forgotPassWord'
+import { useNavigate } from 'react-router-dom'
 
 export const ForgotPassword = () => {
   const [email, setEmail] = useState("")
   const [message, setMessage] = useState("")
   const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
+  const navigate = useNavigate()
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     try {
       await forgotService.forgotPassword(email)
-      setMessage("E-mail de redefinição enviado! Verifique sua caixa de entrada.")
+      setMessage("E-mail de redefinição enviado com sucesso!")
       setError("")
+      setTimeout(() => {
+        setSuccess("")
+        navigate("/")
+      }, 2000)
     } catch (erro: any) {
       setError("Erro ao enviar solicitação. Tente novamente.")
       setMessage("")

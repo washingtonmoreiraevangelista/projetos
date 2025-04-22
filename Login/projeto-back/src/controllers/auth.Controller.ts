@@ -1,7 +1,7 @@
-import { Request, Response } from "express"
 import bcrypt from "bcryptjs"
-import { registerUser, loginUser } from "../services/authService"
-import { service } from '../services/services'
+import { Request, Response } from "express"
+import { service } from '../services/all.service'
+import { loginUser, registerUser } from "../services/auth.service"
 
 
 export const register = async (req: Request, res: Response): Promise<void> => {

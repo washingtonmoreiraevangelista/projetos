@@ -5,7 +5,7 @@ export const service = {
 
   async getCollection(collectionName: string) {
     const response = await connectDB()
-    return response.collection(collectionName).find().toArray()
+    return response.collection(collectionName)
   },
 
   async create(collectionName: string, data: any) {

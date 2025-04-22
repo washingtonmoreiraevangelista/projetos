@@ -1,42 +1,11 @@
-import mongoose, { Schema, Document } from "mongoose"
-import bcrypt from "bcryptjs"
+import { z } from "zod"
 
-export interface IUserModel extends Document {
-  name: string
-  email: string
-  password: string
-  birthDate: Date
-  comparePassword(candidatePassword: string): Promise<boolean>
-}
-
-const userSchema = new Schema<IUserModel>(
-  {
-    name: {
-      type: String,
-      required: [true, "O nome é obrigatório"],
-      trim: true,
-    },
-    email: {
-      type: String,
-      required: [true, "O email é obrigatório"],
-      unique: true,
-      trim: true,
-      lowercase: true,
-    },
-    password: {
-      type: String,
-      required: [true, "A senha é obrigatória"],
-      minlength: [6, "A senha deve ter pelo menos 6 caracteres"],
-    },
-    birthDate: {
-      type: Date,
-      required: [true, "A data de nascimento é obrigatória"],
-    },
-  },
-  {
-    versionKey: false,
-    timestamps: true,
-  }
-)
-
-export const User = mongoose.model<IUserModel>("users", userSchema)
+export const userSchema = z.object({
+  name: z.string().min(1, "O nome é obrigatório"),
+  email: z.string().email("Email inválido"),
+  password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
+  birthDate: z.coerce.date({
+    required_error: "A data de nascimento é obrigatória",
+    invalid_type_error: "Data inválida",
+  }),
+})

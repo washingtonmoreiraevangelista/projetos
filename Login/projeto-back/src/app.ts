@@ -4,7 +4,7 @@ import dotenv from "dotenv"
 import { connectDB } from "./config/mongoClient"
 import { router } from './router/router'
 import { authRouter } from './router/auth'
-import { sendResetPasswordEmail } from './services/ResetPasswordEmail'
+import { resetRouter } from './router/resetPassword'
 
 dotenv.config()
 
@@ -19,9 +19,9 @@ connectDB()
 
 
     // Rotas 
-    app.use("/", router)
-    app.use("/auth", authRouter)
-    app.post("/forgot-password", sendResetPasswordEmail)
+    app.use(router)
+    app.use(authRouter)
+    app.use(resetRouter)
 
 
     app.get("/api", (req, res) => {

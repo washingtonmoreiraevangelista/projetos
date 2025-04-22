@@ -1,16 +1,16 @@
 import { Request, Response } from 'express'
-import { service } from '../services/services'
+import { service } from '../services/all.service'
 
 export const getCollection = async (req: Request, res: Response) => {
   const { collectionName } = req.params
 
-try {
-  const data = await service.getCollection(collectionName)
-  res.status(200).json(data)
-} catch (error: any) {
-  res.status(500).json({ message: error.message });
+  try {
+    const data = await service.getCollection(collectionName)
+    res.status(200).json(data)
+  } catch (error: any) {
+    res.status(500).json({ message: error.message })
 
-}
+  }
 
 }
 export const create = async (req: Request, res: Response) => {
